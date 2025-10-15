@@ -1,23 +1,25 @@
 import WeatherCard from "./WeatherCard";
 import { type CurrentWeather } from "../../services/weatherApi";
 import { useUnit } from "../../context/UnitContext";
-import { formatTemperature } from "../../utils/weatherUtils";
+import { formatSpeed, formatLength} from "../../utils/weatherUtils";
 
 
 interface WeatherCardPanelProps {
     data :CurrentWeather;
+    precipitation?: number;
+    humidity?: number | string;
 }   
 
-const WeatherCardPanel = ({data}: WeatherCardPanelProps) => {
+const WeatherCardPanel = ({data, precipitation, humidity}: WeatherCardPanelProps) => {
     const {unit} = useUnit();
-
+    console.log(humidity);
     const weatherData = [
-        { title : "feels like", value :(unit === "metric" ? data.apparent_temperature : Number(formatTemperature(data.apparent_temperature, "imperial"))), suffix : "\u00B0" },
-        { title : "humidity", value :data.relative_humidity_2m, suffix :"%" },
-        { title : "wind", value :data.wind_speed_10m, suffix : " km/h" },
-        { title : "precipitation", value :data.precipitation, suffix : " mm" },
+        { title : "wind direction", value :data.winddirection, suffix : "\u00B0 N" },
+        { title : "humidity", value :humidity, suffix :"%" },
+        { title : "wind speed", value :formatSpeed(data.windspeed, unit), suffix : unit === "metric" ? " km/h" : " mph" },
+        { title : "precipitation", value :formatLength(precipitation??0, unit), suffix : unit === "metric" ? " mm" : " in" },
     ]
-    
+    console.log("weather data for cards: ", weatherData);
     return (
         <div className="flex gap-4 flex-wrap w-full max-w-screen mt-5 md:gap-5 md:flex-nowrap ">
             {weatherData.map((newData, index) => (

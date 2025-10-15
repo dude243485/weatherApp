@@ -17,7 +17,7 @@ interface hourlyForecastInterface {
 
 
 const HourlyWeatherPanel = ({data}: {data: HourlyForecast}) => {
-
+    console.log("hourly data: ", data);
     const hourlyWeatherData: { [key: string]: hourlyForecastInterface[] } = {};
     for (let i = 0; i < data.time.length; i++)
     {

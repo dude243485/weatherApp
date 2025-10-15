@@ -1,6 +1,6 @@
 interface weatherDataInterface {
     title: string,
-    value : number,
+    value : number | string | undefined,
     suffix : string
 }
 

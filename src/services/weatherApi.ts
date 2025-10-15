@@ -6,52 +6,28 @@ const BASE_URL = "https:api.open-meteo.com/v1";
 //TypeScript interfaces for responses
 export interface CurrentWeather {
     time: string;
-    temperature_2m: number;
-    relative_humidity_2m: number;
-    apparent_temperature : number;
+    temperature: number;
+    windspeed: number;
+    winddirection: number;
+    weathercode: number;
     is_day: boolean;
-    precipitation: number;
-    rain: number;
-    showers: number;
-    snowfall: number;
-    weather_code: number;
-    cloud_cover: number;
-    wind_speed_10m: number;
-    wind_direction_10m: number;
+    
     }
 
 export interface DailyForecast{
     time: string[];
     temperature_2m_max: number[];
     temperature_2m_min: number[];
-    apparent_temperature_max: number[];
-    apparent_temperature_min: number[];
     precipitation_sum: number[];
-    rain_sum: number[];
-    showers_sum: number[];
-    snowfall_sum: number[];
-    precipitation_hours: number[];
     weather_code: number[];
-    sunrise: string[];
-    sunset: string[];
     wind_speed_10m_dominant: number[];
 }
 
 export interface HourlyForecast{
     time: string[];
     temperature_2m: number[];
-    relative_humidity_2m: number[];
-    apparent_temperature: number[];
-    precipitation__probability: number[];
-    precipitation: number[];
-    rain: number[];
-    showers: number[];
-    snowfall: number[];
     weather_code: number[];
-    cloud_cover: number[];
-    wind_speed_10m: number[];
-    wind_direction_10m: number[];
-    visibility: number[];
+    relativehumidity_2m : number[];
 }
 
 export interface WeatherResponse {
@@ -112,12 +88,13 @@ class WeatherApiService {
             latitude,
             longitude,
             current_weather: true,
-            hourly: ['temperature_2m', 'relative_humidity_2m', 'apparent_temperature',
+            // current_weather : []
+            hourly: ['temperature_2m', 'relativehumidity_2m', 'apparent_temperature',
         'precipitation_probability', 'weather_code', 'wind_speed_10m'],
             daily : [
                 'temperature_2m_max', 'temperature_2m_min', 'apparent_temperature_max',
                 'apparent_temperature_min', 'precipitation_sum', 'weather_code',
-                'sunrise', 'sunset', 'wind_speed_10m_max'
+                 'wind_speed_10m_max'
             ],
             forecast_days: 7,
         };

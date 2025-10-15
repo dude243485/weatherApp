@@ -6,7 +6,7 @@ import HourlyWeatherPanel from "../hourlyForecast/HourlyWeatherPanel"
 import { useWeather } from "../../context/WeatherContext"
 import { useState, useEffect } from "react"
 import SearchBar from "../search/SearchBar"
-
+import { type City} from "../../utils/types";
 
 
 const BodyContainer = () => {
@@ -42,11 +42,19 @@ const BodyContainer = () => {
         setCoordinates({latitude: 40.7128, longitude:-74.0060})
       }
   }, []);
+  const [city, setCity] = useState<City | null>(null);
+  const handleCitySelect = (city: City) => {
+    console.log("selected city:", city)
+    setCity(city);
+  }
 
   if (loading) {
     return (
         <>
-            <SearchBar onClick = {refetch} />
+            <SearchBar
+            placeholder="Enter city name..."
+            onClick = {refetch}
+            onCitySelect={handleCitySelect} />
             <div className='flex justify-center items-center text-3xl text-(--brand-text)'>
                 Loading weather data...
             </div>
@@ -57,7 +65,10 @@ const BodyContainer = () => {
   if (error) {
     return (
         <>
-            <SearchBar onClick = {refetch} />
+            <SearchBar 
+            placeholder="Enter city name..."
+            onClick = {refetch}
+            onCitySelect={handleCitySelect} />
             <div>
             <p>Error: {error}</p>
             </div>
@@ -68,31 +79,41 @@ const BodyContainer = () => {
   if (!weatherData) {
     return (
         <>
-            <SearchBar onClick = {refetch} />
+            <SearchBar 
+            placeholder="Enter city name..."
+            onClick = {refetch}
+            onCitySelect={handleCitySelect} />
             <div>No weather data available</div>
         </>
         
     );
   }
-
+  console.log(weatherData.current_weather);
   return(
     <>
-    <SearchBar onClick = {refetch} />
+    <SearchBar 
+    placeholder="Enter city name..."
+    onClick = {refetch}
+    onCitySelect={handleCitySelect}
+     />
     <div className="lg:flex lg:items-start lg:justify-center lg:py-8 lg:px-20">
           <div className= "lg:flex lg:w-2/3 lg:flex-col">
             <div className="px-4 py-8">
-            <BlueAreaBox data = {weatherData.current_weather} />
+            <BlueAreaBox data = {weatherData.current_weather} city = {city} />
             {weatherData.current_weather && (
-              <WeatherCardPanel data={weatherData.current_weather} />
+              <WeatherCardPanel 
+              data={weatherData.current_weather} 
+              precipitation ={weatherData.daily?.precipitation_sum[0]}
+              humidity = { weatherData.hourly?.relativehumidity_2m[0]} />
             )}
             </div>
             {weatherData.daily && (
                 <DailyForecastPanel data={weatherData.daily} />
             )}
         </div>
-        {/* {weatherData.hourly && (
+        {weatherData.hourly && (
             <HourlyWeatherPanel data={weatherData.hourly} />
-        )} */}
+        )}
        </div>
       </> 
   )   

@@ -59,3 +59,17 @@ export const formatTime = (timeString: string, formatStr: string = "HH:mm"): str
 export const formatDate = (dateString: string, formatStr: string = "EEE,MMM d"): string =>{
     return format(new Date(dateString), formatStr);
 }
+
+export const formatSpeed = (speed: number, unit: "metric" | "imperial"): string => {
+    if (unit === "imperial"){
+        return `${(speed / 1.609).toFixed(1)}`;
+    }
+    return `${speed.toFixed(1)}`; 
+}
+
+export const formatLength = (length: number, unit: "metric" | "imperial"): string => {
+    if (unit === "imperial"){
+        return `${(length / 25.4).toFixed(1)}`;
+    }
+    return `${length.toFixed(1)}`;
+}
