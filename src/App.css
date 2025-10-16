@@ -8,7 +8,7 @@
 }
 @font-face {
     font-family: 'Custom';
-    src: url("../src/assets/font/BricolageGrotesque-VariableFont_opsz\,wdth\,wght.ttf") format('truetype');
+    src: url("../public/font/BricolageGrotesque.ttf") format('truetype');
 }
 
 .logo {
