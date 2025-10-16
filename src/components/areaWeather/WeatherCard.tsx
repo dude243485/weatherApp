@@ -12,7 +12,7 @@ const WeatherCard = ({title, value, suffix}:weatherDataInterface) => {
             <p className = "text-[18px] font-light">
                 {title}
             </p>
-            <p className="text-[32px] font-light">
+            <p className="text-[32px] font-light md:text-[28px]">
                 {value}{suffix}
             </p>
         </div>

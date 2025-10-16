@@ -28,6 +28,7 @@ export interface HourlyForecast{
     temperature_2m: number[];
     weather_code: number[];
     relativehumidity_2m : number[];
+    apparent_temperature: number[];
 }
 
 export interface WeatherResponse {

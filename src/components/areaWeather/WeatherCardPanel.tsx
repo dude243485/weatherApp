@@ -1,19 +1,20 @@
 import WeatherCard from "./WeatherCard";
 import { type CurrentWeather } from "../../services/weatherApi";
 import { useUnit } from "../../context/UnitContext";
-import { formatSpeed, formatLength} from "../../utils/weatherUtils";
+import { formatSpeed, formatLength, formatTemperature} from "../../utils/weatherUtils";
 
 
 interface WeatherCardPanelProps {
     data :CurrentWeather;
     precipitation?: number;
     humidity?: number | string;
+    apparent? : number;
 }   
 
-const WeatherCardPanel = ({data, precipitation, humidity}: WeatherCardPanelProps) => {
+const WeatherCardPanel = ({data, precipitation, humidity, apparent}: WeatherCardPanelProps) => {
     const {unit} = useUnit();
     const weatherData = [
-        { title : "wind direction", value :data.winddirection, suffix : "\u00B0 N" },
+        { title : "Feels like", value :formatTemperature(apparent??0, unit), suffix : "" },
         { title : "humidity", value :humidity, suffix :"%" },
         { title : "wind speed", value :formatSpeed(data.windspeed, unit), suffix : unit === "metric" ? " km/h" : " mph" },
         { title : "precipitation", value :formatLength(precipitation??0, unit), suffix : unit === "metric" ? " mm" : " in" },

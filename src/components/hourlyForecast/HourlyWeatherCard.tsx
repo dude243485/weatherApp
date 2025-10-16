@@ -18,7 +18,7 @@ const HourlyWeatherCard = ({temperature, weatherCode, displayTime} : WeatherItem
                 {`${displayTime}`}
             </p>
             <p className="text-[16px]">
-                {formatTemperature(temperature, unit)}
+                {formatTemperature(temperature, unit).slice(0, -1)}
             </p>
             
         </div>

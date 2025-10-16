@@ -130,7 +130,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
     return(
         <div
         ref = {dropdownRef}
-        className = {`w-full font-(family-name:--dm-sans) flex flex-col gap-3 px-4  md:flex-row md:px-6 lg:px-80`}
+        className = {`w-full relative font-(family-name:--dm-sans) flex flex-col gap-3 px-4  md:flex-row md:px-6 lg:px-80`}
         >
             <div className= {`  w-full relative `}>
                 <img
@@ -153,18 +153,26 @@ const SearchBar: React.FC<SearchBarProps> = ({
                     transition-all duration-400 delay-100 md:w-full
                     `}
                 />
-            </div>
-            {showDropdown && (
-                <div >
+                {showDropdown && (
+                <div className= {`absolute top-15 z-20  left-0 right-0 `} >
+                    {isLoading && (displayedCities.length == 0) && (
+                        <div className="bg-(--brand-neutral) rounded-[12px] flex flex-row gap-1 px-2 py-2">
+                            <p>Search in progress</p>
+                        </div>
+                    )}
                     {displayedCities.length > 0 ? (
-                        <ul role = "listbox">
+                        <ul role = "listbox" className="bg-(--brand-neutral) rounded-[12px] flex flex-col gap-1 px-2 py-2">
                             {displayedCities.map((city, index)=>(
                                 <li key = {city.id}
                                 
                                 role = "option"
                                 aria-selected = { index === selectedIndex}
-                                className={`${index === selectedIndex ?"selected" : ""} cursor-pointer`}
-                                onClick={()=> handleCitySelect(city)}
+                                className={`${index === selectedIndex ?"selected" : ""} cursor-pointer px-[10px] py-[10px] hover:bg-(--brand-mid)
+                                hover:outline-1 hover:outline-(--brand-outline) rounded-[8px]`}
+                                onClick={()=> {
+                                    handleCitySelect(city)
+                                    setShowDropdown(false)
+                                }}
                                 onMouseEnter = {()=> setSelectedIndex(index)}
                                 >
                                     <div>{getDisplayName(city)}</div>
@@ -180,6 +188,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
                 </div>
             )}
+            </div>
+            
             <button
             onClick={onClick}
             className = {`bg-(--brand-blue) w-full py-4 flex justify-center items-center rounded-[12px] transition-all 

@@ -34,3 +34,5 @@ async function getCityFromCoords(lat: number, lon: number): Promise<LocationData
         return null
     }
 }
+
+export default getCityFromCoords;

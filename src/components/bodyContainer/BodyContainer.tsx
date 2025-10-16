@@ -7,6 +7,7 @@ import { useWeather } from "../../context/WeatherContext"
 import { useState, useEffect } from "react"
 import SearchBar from "../search/SearchBar"
 import { type City} from "../../utils/types";
+import getCityFromCoords from "../../services/locationGetter"
 
 
 const BodyContainer = () => {
@@ -23,12 +24,19 @@ const BodyContainer = () => {
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        async (position) => {
           setCoordinates({
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           });
           console.log(position.coords.latitude, position.coords.longitude);
+
+          const locationData = await getCityFromCoords(position.coords.latitude, position.coords.longitude);
+          if (locationData) {
+            setAltCity(`${locationData?.city}, ${locationData?.country}`)
+            // console.log(`you are in: ${locationData.city}, ${locationData.country}`);
+          }          
+
         },
         (error) => {
           console.error("Error getting location:", error);
@@ -51,6 +59,7 @@ const BodyContainer = () => {
           longitude: city.longitude,
     });
   }
+  const [altCity, setAltCity] = useState<String>("Your Location")
 
   if (loading) {
     return (
@@ -103,10 +112,14 @@ const BodyContainer = () => {
     <div className="lg:flex lg:items-start lg:justify-center lg:py-8 lg:px-20">
           <div className= "lg:flex lg:w-2/3 lg:flex-col">
             <div className="px-4 py-8">
-            <BlueAreaBox data = {weatherData.current_weather} city = {city} />
+            <BlueAreaBox 
+            data = {weatherData.current_weather} 
+            city = {city}
+            altCity = {altCity} />
             {weatherData.current_weather && (
               <WeatherCardPanel 
               data={weatherData.current_weather} 
+              apparent = {weatherData.hourly?.apparent_temperature[0]}
               precipitation ={weatherData.daily?.precipitation_sum[0]}
               humidity = { weatherData.hourly?.relativehumidity_2m[0]} />
             )}

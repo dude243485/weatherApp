@@ -6,9 +6,10 @@ import { type City } from "../../utils/types";
 interface BlueAreaBoxProps {
     data? :CurrentWeather;
     city?: City | null;
+    altCity? : String;
 }
 
-const BlueAreaBox = ({data, city}: BlueAreaBoxProps) => {
+const BlueAreaBox = ({data, city, altCity}: BlueAreaBoxProps) => {
     const {unit} = useUnit()
     return (
         <div className= {` font-(family-name:--dm-sans)  lg:px-0 lg:py-0 `}>
@@ -17,7 +18,7 @@ const BlueAreaBox = ({data, city}: BlueAreaBoxProps) => {
             <div className="md:text-left">
                 <h3 className = "text-[28px] font-bold">
                 {/* {Berlin, Germany {city.name}} */}
-                {city ? `${city.name}, ${city.country}` : "Your Location"}
+                {city ? `${city.name}, ${city.country}` : altCity}
             </h3>
             <p>
                 {/* Tuesday, Aug 5, 2025 */}
@@ -36,7 +37,7 @@ const BlueAreaBox = ({data, city}: BlueAreaBoxProps) => {
                 />
                 <p
                 className="text-8xl font-semibold italic"
-                >{`${unit == "metric" ?  formatTemperature(data?.temperature ?? 0, "metric")  : formatTemperature(data?.temperature ?? 0, "imperial")} `}</p>
+                >{`${unit == "metric" ?  formatTemperature(data?.temperature ?? 0, "metric").slice(0, -1)  : formatTemperature(data?.temperature ?? 0, "imperial").slice(0, -1)} `}</p>
 
             </div>
             </div>

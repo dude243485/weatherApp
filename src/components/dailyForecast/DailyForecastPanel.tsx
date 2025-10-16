@@ -21,8 +21,8 @@ const DailyForecastPanel = ({data}:DailyForecastPanelProps) => {
         dailyForecastData.push({
             day : new Date(Date.now() + i * 86400000).toLocaleDateString("en-US", { weekday: "short" }),
             icon : getWeatherIcon(data.weather_code[i]),
-            lowTemp : formatTemperature(data.temperature_2m_min[i], unit),
-            highTemp : formatTemperature(data.temperature_2m_max[i], unit)
+            lowTemp : formatTemperature(data.temperature_2m_min[i], unit).slice(0, -1),
+            highTemp : formatTemperature(data.temperature_2m_max[i], unit).slice(0, -1)
         })
     }
 
