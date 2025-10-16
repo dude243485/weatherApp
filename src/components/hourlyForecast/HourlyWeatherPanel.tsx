@@ -1,55 +1,56 @@
 import HourlyWeatherCard from "./HourlyWeatherCard";
 // import hourlyWeatherData from "../../tempData/hourlyWeatherData";
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import icon_dropdown from "../../assets/icon-dropdown.svg";
 import HourlyForecastDropdown from "../dropdowns/HourlyForecastDropdown";
 import { type HourlyForecast } from "../../services/weatherApi";
-import { getWeatherIcon } from "../../utils/weatherUtils";
-
-
-interface hourlyForecastInterface {
-    time: number;
-    icon :string;
-    temp : number;
-}
+import { getDayOptions, getWeatherForDay, formatDateForDisplay } from "../../utils/weatherUtils";
+import { type DayOption, type WeatherItem } from "../../utils/types";
 
 
 
 
-const HourlyWeatherPanel = ({data}: {data: HourlyForecast}) => {
-    console.log("hourly data: ", data);
-    const hourlyWeatherData: { [key: string]: hourlyForecastInterface[] } = {};
-    for (let i = 0; i < data.time.length; i++)
-    {
-        const hour = new Date(data.time[i]).getHours();
-        const day = new Date(data.time[i]).toLocaleDateString("en-US", { weekday: "long" });
-        if (!hourlyWeatherData[day]) {
-            hourlyWeatherData[day] = [];
-        }
-        hourlyWeatherData[day].push({
-            time: hour,
-            icon: getWeatherIcon(data.weather_code[i]),
-            temp: data.temperature_2m[i],
-        });
+const HourlyWeatherPanel = ({weatherData}: {weatherData:HourlyForecast}) => {
+    // console.log("hourly data: ", weatherData);
+    
+   const [selectedDate, setSelectedDate]  = useState<string>('');
+   const [dayOptions, setDayOptions] = useState<DayOption[]>([]);
+   const [weatherItems, setWeatherItems] = useState<WeatherItem[]>([]);
+   const [isExpanded, setIsExpanded] = useState(false);
+
+   useEffect (()=> {
+    if (weatherData.time.length > 0){
+        const currentDate = weatherData.time[0].split("T")[0];
+        setSelectedDate(currentDate);
+
+        const options = getDayOptions(currentDate);
+        setDayOptions(options);
+
+        const items = getWeatherForDay(weatherData, currentDate);
+        setWeatherItems(items);
     }
+   },  [weatherData])
+    const handleDateChange = (event: React.MouseEvent<HTMLButtonElement>) => {
+        const newDate = event.currentTarget.value;
+        setSelectedDate(newDate);
+        setIsExpanded(false)
 
+        const items = getWeatherForDay(weatherData, newDate);
+        setWeatherItems(items);
+   };
 
-    const [isExpanded, setIsExpanded] = useState(false);
+   if (weatherItems.length === 0){
+    return <div>
+        Loading weather data...
+    </div>
+   }
 
     const toggleExpand = () => {
         setIsExpanded(!isExpanded);
     };
 
-    const dayKeys = Object.keys(hourlyWeatherData);
-
-    const [currentDay, setCurrentDay] = useState("tuesday");
-
-    const onSelectDay = (day: string) => {
-        setCurrentDay(day);
-        setIsExpanded(false);
-    }
-
-
+    console.log("selected date: ", selectedDate);
+    
     return(
         <div className="px-4 pt-3 pb-8 lg:pb-0  lg:w-1/3 lg:pt-8 lg:flex lg:grow lg:h-full">
             <div className={` bg-(--brand-neutral) font-(family-name:--dm-sans) text-(--brand-text) px-4 rounded-[20px] 
@@ -57,13 +58,13 @@ const HourlyWeatherPanel = ({data}: {data: HourlyForecast}) => {
             <div className="flex items-center justify-between pb-[22.5px] ">
                 <h3 className="font-semibold text-[20px] text-left "
                     >Hourly forecast</h3>
-                <div className="relative">
+                <div  className="relative">
                     <button
                     onClick = {toggleExpand}
                     className={`text-[16px] rounded-[8px] cursor-pointer py-2 pl-4 pr-10 bg-(--brand-mid)
                         capitalize`}
                     >
-                        {currentDay}
+                       {formatDateForDisplay(selectedDate)}
 
                     </button>
                     <img
@@ -74,13 +75,13 @@ const HourlyWeatherPanel = ({data}: {data: HourlyForecast}) => {
                     />
                     {
                         isExpanded && (
-                            <HourlyForecastDropdown days = {dayKeys} onSelectDay={onSelectDay} />
+                            <HourlyForecastDropdown days = {dayOptions} onSelectDay={handleDateChange} />
                         )
                     }
                 </div>
             </div>
             <div className="gap-4 flex flex-col">
-                {hourlyWeatherData[currentDay as keyof typeof hourlyWeatherData].map((data, index) =>(
+                {weatherItems.map((data, index) =>(
                     <HourlyWeatherCard key = {index} {...data} />
                 ))}
             </div>

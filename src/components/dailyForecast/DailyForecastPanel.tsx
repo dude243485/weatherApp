@@ -1,7 +1,8 @@
 // import dailyForecastData from "../../tempData/dailyForecastData";
 import DailyForecastCard from "./DailyForecastCard";
 import { type DailyForecast } from "../../services/weatherApi";
-import { getWeatherIcon } from "../../utils/weatherUtils";
+import { formatTemperature, getWeatherIcon } from "../../utils/weatherUtils";
+import { useUnit } from "../../context/UnitContext";
 
 interface DailyForecastPanelProps {
     data: DailyForecast;
@@ -9,18 +10,19 @@ interface DailyForecastPanelProps {
 interface forecastDataInterface {
     day : string;
     icon : string;
-    lowTemp : number;
-    highTemp : number;
+    lowTemp : number | string;
+    highTemp : number | string;
 }
 const DailyForecastPanel = ({data}:DailyForecastPanelProps) => {
     const dailyForecastData: forecastDataInterface[] =  []
+    const { unit } = useUnit()
     for (let i = 0 ; i < data.weather_code.length; i++)
     {
         dailyForecastData.push({
             day : new Date(Date.now() + i * 86400000).toLocaleDateString("en-US", { weekday: "short" }),
             icon : getWeatherIcon(data.weather_code[i]),
-            lowTemp : data.temperature_2m_min[i],
-            highTemp : data.temperature_2m_max[i]
+            lowTemp : formatTemperature(data.temperature_2m_min[i], unit),
+            highTemp : formatTemperature(data.temperature_2m_max[i], unit)
         })
     }
 

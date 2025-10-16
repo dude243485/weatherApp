@@ -1,7 +1,8 @@
+import type { DayOption } from "../../utils/types";
 
 interface hourlyProps {
-    days : string[];
-    onSelectDay : (day :string) => void;
+    days : DayOption[];
+    onSelectDay : (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 const HourlyForecastDropdown = ({days, onSelectDay} : hourlyProps) => {
@@ -17,10 +18,11 @@ const HourlyForecastDropdown = ({days, onSelectDay} : hourlyProps) => {
                         {
                             days.map((day, index) => (
                                 <button
-                                onClick = {(e) => onSelectDay(e.currentTarget.textContent)}
+                                onClick = {(e) => onSelectDay(e)}
                                  key = {index}
+                                 value = {day.date}
                                  className="w-full text-left py-[10px] px-2 text-16 transition-all duration-400 delay-100 hover:bg-(--brand-mid) rounded-[8px] capitalize">
-                                    {day}
+                                    {day.display}
                                 </button>
                             ))
                         }

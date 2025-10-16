@@ -12,3 +12,14 @@ export interface SearchBarProps {
     placeholder?: string;
     onClick: () => void
 }
+export interface DayOption {
+    date: string;
+    display: string;
+    isToday: boolean;
+}
+export interface WeatherItem {
+    time: string;
+    temperature: number;
+    weatherCode: number;
+    displayTime: string;
+}

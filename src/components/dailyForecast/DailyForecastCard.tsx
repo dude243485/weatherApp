@@ -1,8 +1,8 @@
 interface forecastDataInterface {
     day : string;
     icon : string;
-    lowTemp : number;
-    highTemp : number;
+    lowTemp : number | string;
+    highTemp : number | string;
 }
 
 
@@ -17,8 +17,8 @@ const DailyForecastCard = ({day, icon, lowTemp, highTemp} : forecastDataInterfac
             className="w-15"
             />
             <div className="flex justify-between items-center text-[16px] w-full">
-                <p>{lowTemp + "\u00B0"}</p>
-                <p>{highTemp + "\u00B0"}</p>
+                <p>{lowTemp }</p>
+                <p>{highTemp}</p>
             </div>
 
         </div>

@@ -46,6 +46,10 @@ const BodyContainer = () => {
   const handleCitySelect = (city: City) => {
     console.log("selected city:", city)
     setCity(city);
+    setCoordinates({
+          latitude: city.latitude,
+          longitude: city.longitude,
+    });
   }
 
   if (loading) {
@@ -88,7 +92,7 @@ const BodyContainer = () => {
         
     );
   }
-  console.log(weatherData.current_weather);
+  
   return(
     <>
     <SearchBar 
@@ -112,7 +116,7 @@ const BodyContainer = () => {
             )}
         </div>
         {weatherData.hourly && (
-            <HourlyWeatherPanel data={weatherData.hourly} />
+            <HourlyWeatherPanel weatherData={weatherData.hourly} />
         )}
        </div>
       </> 

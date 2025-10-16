@@ -6,6 +6,8 @@ import icon_partly_cloudy from "../assets/icon-partly-cloudy.webp";
 import icon_stormy from "../assets/icon-storm.webp";
 import icon_snow from "../assets/icon-snow.webp";
 import icon_overcast from "../assets/icon-overcast.webp";
+import { type DayOption, type WeatherItem } from "./types";
+import type { HourlyForecast } from "../services/weatherApi";
 
 export const weatherCodeMap: Record<number, {description: string, icon:string}> = {
     0: {description: "Clear sky", icon: icon_sun },
@@ -72,4 +74,83 @@ export const formatLength = (length: number, unit: "metric" | "imperial"): strin
         return `${(length / 25.4).toFixed(1)}`;
     }
     return `${length.toFixed(1)}`;
+}
+
+export const formatTime2 = (isoString : string): string => {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
+        hour12: true
+    }).toLowerCase();
+}
+
+export const formatDateForDisplay = (isoString: string): string => {
+    const date =  new Date(isoString);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    if (date.toDateString() === today.toDateString()){
+        return 'Today';
+    }else if (date.toDateString() === tomorrow.toDateString()){
+        return 'Tomorrow';
+    }else{
+        return date.toLocaleDateString('en-US', {
+            weekday: 'short',
+            month: 'short',
+            day: 'numeric'
+        })
+    }
+}
+
+export const getDayOptions = (startDate: string): DayOption[] => {
+    const options: DayOption[] = [];
+    const start = new Date(startDate);
+
+    for (let i = 0; i < 7; i++){
+        const currentDate = new Date(start);
+        currentDate.setDate(start.getDate() + i);
+
+        const dateString = currentDate.toISOString().split('T')[0];
+
+        options.push({
+            date : dateString,
+            display: formatDateForDisplay(dateString + 'T00:00'),
+            isToday: i ===0
+        });
+ 
+    }
+    return options;
+}
+
+function to12Hour(time24: string): string {
+    const [hours, minutes] = time24.split(":");
+    const hour = parseInt(hours);
+    const period = hour >= 12? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+
+    return `${hour12}:${minutes} ${period}`;
+}
+export const getWeatherForDay = (
+    weatherData : HourlyForecast,
+    selectedDate: string
+): WeatherItem[] => {
+    const items : WeatherItem[] = [];
+    const targetDate = selectedDate.split('T')[0];
+    const now = new Date();
+
+    for (let i = 0; i < weatherData.time.length; i++){
+        const time = weatherData.time[i];
+        
+        if ((time.startsWith(targetDate))&& (new Date(time) >= now)){
+            items.push({
+                time: time,
+                temperature: weatherData.temperature_2m[i],
+                weatherCode : weatherData.weather_code[i],
+                displayTime: to12Hour(formatTime(time))
+            })
+        }
+        if (items.length >= 8) break;
+    }
+    return items;
 }
