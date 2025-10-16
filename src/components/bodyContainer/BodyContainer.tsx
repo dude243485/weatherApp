@@ -29,7 +29,7 @@ const BodyContainer = () => {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
           });
-          console.log(position.coords.latitude, position.coords.longitude);
+          // console.log(position.coords.latitude, position.coords.longitude);
 
           const locationData = await getCityFromCoords(position.coords.latitude, position.coords.longitude);
           if (locationData) {
@@ -52,7 +52,6 @@ const BodyContainer = () => {
   }, []);
   const [city, setCity] = useState<City | null>(null);
   const handleCitySelect = (city: City) => {
-    console.log("selected city:", city)
     setCity(city);
     setCoordinates({
           latitude: city.latitude,

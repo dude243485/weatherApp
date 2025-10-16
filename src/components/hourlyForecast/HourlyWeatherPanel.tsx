@@ -48,8 +48,6 @@ const HourlyWeatherPanel = ({weatherData}: {weatherData:HourlyForecast}) => {
     const toggleExpand = () => {
         setIsExpanded(!isExpanded);
     };
-
-    console.log("selected date: ", selectedDate);
     
     return(
         <div className="px-4 pt-3 pb-8 lg:pb-0  lg:w-1/3 lg:pt-8 lg:flex lg:grow lg:h-full">
