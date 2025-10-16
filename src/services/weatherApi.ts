@@ -1,7 +1,7 @@
 import axios from "axios";
 
 //API base URL
-const BASE_URL = "https:api.open-meteo.com/v1";
+const BASE_URL = "https://api.open-meteo.com/v1";
 
 //TypeScript interfaces for responses
 export interface CurrentWeather {
