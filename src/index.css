@@ -14,5 +14,5 @@
 
 @font-face {
     font-family: "DM_Sans";
-    src: url("../public/font/DMSans.ttf") format('truetype');
+    src: url("/font/DMSans.ttf") format('truetype');
 }
