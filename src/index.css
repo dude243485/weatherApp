@@ -9,10 +9,19 @@
     --brand-blue : #4658D9; 
     --brand-dark-blue: #2B1B9C;
     --dm-sans : "DM_Sans";
-    --bricolage: "BricolageGrotesque";
+    --bricolage: "Bricolage";
 }
-
+:root{
+    --font-primary: "Bricolage", system-ui, sans-serif;
+}
 @font-face {
     font-family: "DM_Sans";
     src: url("/font/DMSans.ttf") format('truetype');
+}
+@font-face {
+    font-family: 'Bricolage';
+    src: url("/font/BricolageGrotesque.ttf") format('truetype');
+}
+body, html{
+    font-family: var(--font-primary);
 }

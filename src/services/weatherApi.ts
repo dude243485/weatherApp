@@ -55,21 +55,27 @@ export interface WeatherRequestParams {
 }
 
 class WeatherApiService {
+    // private client = axios.create({
+    //     baseURL: BASE_URL,
+    //     timeout: 10000,
+    // });
+    //keep a plain axios instance: build absolute  URL at call time to avoid relative path issues in production
     private client = axios.create({
-        baseURL: BASE_URL,
         timeout: 10000,
-    });
+    })
 
     async getWeather(params: WeatherRequestParams): Promise<WeatherResponse>{
         try{
-            const response = await this.client.get<WeatherResponse>("/forecast",
+            const response = await this.client.get<WeatherResponse>(`${BASE_URL}/forecast`,
                 {
                     params: {
                         latitude: params.latitude,
                         longitude: params.longitude,
                         current_weather: params.current_weather ?? true,
-                        hourly : params.hourly?.join(','),
-                        daily: params.daily?.join(','),
+                        // hourly : params.hourly?.join(','),
+                        // daily: params.daily?.join(','),
+                        hourly: params.hourly && params.hourly.length > 0 ? params.hourly.join(',') : undefined,
+                        daily: params.daily && params.daily.length > 0 ? params.daily.join(',') : undefined,
                         timezone: params.timezone || 'auto',
                         forecast_days: params.forecast_days || 7,
                     },
@@ -77,8 +83,14 @@ class WeatherApiService {
             );
 
             return response.data;
-        }catch (error) {
-            console.error("Error fetching weather data: ", error);
+        }catch (error:any) {
+            // console.error("Error fetching weather data: ", error);
+            console.error("Error fetching weather data:", {
+                message: error.message,
+                status : error.response?.status,
+                responseData: error.response?.data,
+                requestUrl: error.config?.url || `${BASE_URL}/forecast`
+            });
             throw new Error("Failed to fetch weather data");
 
         }
