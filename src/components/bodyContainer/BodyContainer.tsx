@@ -100,7 +100,7 @@ const BodyContainer = () => {
         
     );
   }
-  console.log(weatherData.current_weather)
+
   return(
     <>
     <SearchBar 

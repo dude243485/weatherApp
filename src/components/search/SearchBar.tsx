@@ -16,15 +16,24 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
     const dropdownRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
+    const skipSearchRef = useRef(false);
+    const abortControllerRef = useRef<AbortController | null>(null);
 
     //Debounce search to avoid too many API calls
     useEffect(() => {
+        if (skipSearchRef.current){
+            skipSearchRef.current = false;
+            return;
+        }
         const searchCities = async () =>{
             if (query.trim().length < 2){
                 setCities([]);
                 setShowDropdown(false);
                 return;
             }
+            abortControllerRef.current?.abort(); //abort previous request if any
+            const controller = new AbortController();
+            abortControllerRef.current = controller;
 
             setIsLoading(true);
             try{
@@ -36,9 +45,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
                             count: 10, //get 10 matching cities in response
                             language: "en",
                             format: "json"
-                        }
+                        },
+                        signal: controller.signal
                     }
                 );
+                if (controller.signal.aborted) return; //if aborted, do nothing
                 const cityData: City[] = (response.data.results || []).map((item:any)=>({
                     id: item.id,
                     name: item.name,
@@ -52,6 +63,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 setShowDropdown(cityData.length> 0) //show the dropdown if the city length is not zero
                 setSelectedIndex(-1);
             }catch(error){
+                if (axios.isAxiosError(error) && (error.code === 'ERR_CANCELED' || error.name === 'canceledError' || error.message === 'canceled')) {
+                    return;
+                }
                 console.error("Error fetching cities:", error);
                 setCities([]);
                 setShowDropdown(false);
@@ -85,10 +99,16 @@ const SearchBar: React.FC<SearchBarProps> = ({
         setQuery(e.target.value);
     }
     const handleCitySelect = (city: City) => {
+        skipSearchRef.current = true;
+        abortControllerRef.current?.abort(); //abort any ongoing request
+        abortControllerRef.current = null;
         setQuery(city.name);
-        setShowDropdown(false);
         setSelectedIndex(-1);
+        setCities([]);
+        setShowDropdown(false);
+        inputRef.current?.blur();
         onCitySelect(city);
+        
     }
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (!showDropdown) return;
@@ -144,7 +164,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
                 onChange = {handleInputChange}
                 onKeyDown={handleKeyDown}
                 placeholder= {placeholder}
-                onFocus = {() => query.length >= 2 && cities.length > 0 && setShowDropdown(true)}
+                onFocus = {() => query.length >= 2 && cities.length > 0 &&  setShowDropdown(true)}
                 aria-autocomplete="list"
                 aria-expanded = {showDropdown}
                 type ="text"
